@@ -1,9 +1,14 @@
 #include <Arduino.h>
+#include <PubSubClient.h>
+#include <ArduinoJson.h>
+
 
 #define RXD2 16
 #define TXD2 17
 
 String receivedMessage = "";
+
+bool parseReceivedMessage(const String& receivedMessage, JsonDocument& doc);
 
 void setup()
 {
@@ -26,9 +31,24 @@ void loop()
     if (inCommingChar == '\n')
     {
       // Print the message
-      Serial.print("You sent: ");
+      Serial.print("You received: ");
       Serial.println(receivedMessage);
+      
+      // Parse the received message
+      JsonDocument doc;
+      if (parseReceivedMessage(receivedMessage, doc)) {
+        // Successfully parsed JSON and 'deviceID' key exists
+        // You can now use the `doc` object to access the JSON data
+        String deviceID = doc["deviceID"].as<String>();
+        Serial.print("deviceID: ");
+        Serial.println(deviceID);
 
+      }
+      else {
+        // Failed to parse JSON or 'deviceID' key does not exist
+        // Handle the error here
+        Serial.println("Failed to parse JSON or 'deviceID' key does not exist");
+      }
       // Clear the message buffer for the next input
       receivedMessage = "";
     }
@@ -38,4 +58,20 @@ void loop()
       receivedMessage += inCommingChar;
     }
   }
+}
+
+bool parseReceivedMessage(const String& receivedMessage, JsonDocument& doc) {
+  DeserializationError error = deserializeJson(doc, receivedMessage);
+  if (error) {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return false;
+  }
+
+  if (!doc["deviceID"].is<const char*>()) {
+    Serial.println(F("Key 'deviceID' not found in JSON"));
+    return false;
+  }
+
+  return true;
 }
