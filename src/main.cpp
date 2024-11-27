@@ -8,6 +8,7 @@
 const char MQTT_BROKER_ADRRESS[] = "192.168.3.33";
 const uint16_t MQTT_PORT = 1883;
 const char PUBLISH_WEATHER_OUTDOOR_TOPIC[] = "weather/outdoor/";
+const char PUBLISH_WEATHER_INDOOR_TOPIC[] = "weather/indoor/";
 
 // Create WiFi and MQTT client instances
 WiFiClient espClient;
@@ -50,6 +51,7 @@ void loop()
       // Print the message
       Serial.print("You received: ");
       Serial.println(receivedMessage);
+      Serial.println();
       
       // Parse the received message
       JsonDocument doc;
@@ -71,7 +73,23 @@ void loop()
           // mqttClient.publish(PUBLISH_WEATHER_OUTDOOR_TOPIC, receivedMessage.c_str());
           mqttClient.publish(PUBLISH_WEATHER_OUTDOOR_TOPIC, receivedMessage.c_str());
           Serial.println("Published data to MQTT broker");
-        }        
+        }
+        else if (deviceID == "ESP32-2-indoor")
+        {
+          // Publish the data to the MQTT broker
+          if (!mqttClient.connected())
+          {
+            reconnectMqttClient();
+          }
+          // mqttClient.publish(PUBLISH_WEATHER_INDOOR_TOPIC, receivedMessage.c_str());
+          mqttClient.publish(PUBLISH_WEATHER_INDOOR_TOPIC, receivedMessage.c_str());
+          Serial.println("Published data to MQTT broker");
+        }
+        else
+        {
+          // Invalid deviceID
+          Serial.println("Invalid deviceID");
+        }      
 
       }
       else {
