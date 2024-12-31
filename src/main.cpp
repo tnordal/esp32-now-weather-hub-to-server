@@ -1,16 +1,9 @@
 #include <Arduino.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
-
-#if defined(ESP32)
 #include <WiFiMulti.h>
+
 WiFiMulti wifiMulti;
-#define DEVICE "ESP32"
-#elif defined(ESP8266)
-#include <ESP8266WiFiMulti.h>
-ESP8266WiFiMulti wifiMulti;
-#define DEVICE "ESP8266"
-#endif
 
 #include "secrets.h"
 #include "db.h" // Include the db.h file

@@ -3,9 +3,6 @@
 // Define InfluxDB client instance with preconfigured InfluxCloud certificate
 InfluxDBClient client(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN, InfluxDbCloud2CACert);
 
-// Define Data point
-Point sensor("wifi_status");
-
 Point makePoint(String message)
 {
   JsonDocument doc;

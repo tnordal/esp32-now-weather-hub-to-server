@@ -19,9 +19,6 @@
 // Declare InfluxDB client instance with preconfigured InfluxCloud certificate
 extern InfluxDBClient client;
 
-// Declare Data point
-extern Point sensor;
-
 Point makePoint(String message);
 void updateInfluxDB(Point point);
 void setupInfluxDB();
