@@ -35,6 +35,8 @@ void setup()
   }
   Serial.println();
 
+  timeClient.begin();
+
   setupInfluxDB(); // Call the setup function for InfluxDB
   bootMessage();    // Call the boot message function
 }
