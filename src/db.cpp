@@ -28,8 +28,8 @@ Point makePoint(String message)
   point.addField("value", value);
 
   // Print the point for debugging
-  Serial.print("Point created: ");
-  Serial.println(point.toLineProtocol());
+  // Serial.print("Point created: ");
+  // Serial.println(point.toLineProtocol());
 
   return point;
 }

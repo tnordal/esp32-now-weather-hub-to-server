@@ -6,6 +6,7 @@
 WiFiMulti wifiMulti;
 
 #include "secrets.h"
+#include "display.h"
 #include "db.h" // Include the db.h file
 
 #define RXD2 16
@@ -16,6 +17,8 @@ String receivedMessage = "";
 void setup()
 {
   Serial.begin(9600, SERIAL_8N1);
+  setupDisplay(); // Call the setup function for the display
+
   Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
   Serial.println("Serial Txd is on pin: " + String(TXD2));
   Serial.println("Serial Rxd is on pin: " + String(RXD2));
@@ -33,6 +36,7 @@ void setup()
   Serial.println();
 
   setupInfluxDB(); // Call the setup function for InfluxDB
+  bootMessage();    // Call the boot message function
 }
 
 void loop()
@@ -44,7 +48,17 @@ void loop()
     // check if the point is valid
     if (p.toLineProtocol() != "error")
     {
+      Serial.println("Received message: " + receivedMessage); // Print the received message
       updateInfluxDB(p);
+      delay(20);
+      JsonDocument doc;
+      DeserializationError error = deserializeJson(doc, receivedMessage);
+      if (!error) {
+        JsonObject obj = doc.as<JsonObject>();
+        displayJsonData(obj);
+      } else {
+        Serial.println("Failed to parse JSON");
+      }
     }
   }
   delay(10); // Add a small delay
