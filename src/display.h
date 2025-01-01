@@ -46,8 +46,10 @@ static const unsigned char PROGMEM logo16_glcd_bmp[] =
 #error("Height incorrect, please fix Adafruit_SH1106.h!");
 #endif
 
+#define GMT_OFFSET_SEC 3600
+
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP);
+NTPClient timeClient(ntpUDP, GMT_OFFSET_SEC);
 
 // Make a init function for the display, the address is 0x3C
 void setupDisplay()
