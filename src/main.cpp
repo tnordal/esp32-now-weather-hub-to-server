@@ -51,13 +51,18 @@ void loop()
     if (p.toLineProtocol() != "error")
     {
       Serial.println("Received message: " + receivedMessage); // Print the received message
-      updateInfluxDB(p);
+      
+      // Try to update InfluxDB, but continue even if it fails
+      if (!updateInfluxDB(p)) {
+        Serial.println("Failed to update InfluxDB");
+      }
+      
       delay(20);
       JsonDocument doc;
       DeserializationError error = deserializeJson(doc, receivedMessage);
       if (!error) {
         JsonObject obj = doc.as<JsonObject>();
-        displayJsonData(obj);
+        displayLastJsonData(obj);
       } else {
         Serial.println("Failed to parse JSON");
       }
