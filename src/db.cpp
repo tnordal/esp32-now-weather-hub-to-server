@@ -34,13 +34,18 @@ Point makePoint(String message)
   return point;
 }
 
-void updateInfluxDB(Point point)
+bool updateInfluxDB(Point point)
 {
   // Write point to InfluxDB
   if (!client.writePoint(point))
   {
     Serial.print("InfluxDB write failed: ");
     Serial.println(client.getLastErrorMessage());
+    return false;
+  }
+  else
+  {
+    return true;
   }
 }
 

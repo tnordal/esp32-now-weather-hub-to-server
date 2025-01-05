@@ -20,7 +20,7 @@
 extern InfluxDBClient client;
 
 Point makePoint(String message);
-void updateInfluxDB(Point point);
+bool updateInfluxDB(Point point);
 void setupInfluxDB();
 
 #endif // DB_H
