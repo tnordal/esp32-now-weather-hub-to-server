@@ -76,6 +76,9 @@ void bootMessage()
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.print("Boot Time: ");
+  display.println(timeClient.getFormattedTime());  
   display.setCursor(10, 32);
   display.println("InfluxDB Logger");
   display.display();
@@ -134,6 +137,50 @@ void displayJsonData(const JsonObject &doc)
     display.print(" MV: ");
     display.println(messages[index].value);
     y += 8; // Move to the next line
+  }
+
+  // Update the display
+  display.display();
+}
+
+// Function to display the last JSON data with specific types and time on top
+void displayLastJsonData(const JsonObject &doc)
+{
+  // Store the new message in the circular buffer
+  strlcpy(messages[messageIndex].type, doc["tags"]["type"], sizeof(messages[messageIndex].type));
+  messages[messageIndex].value = doc["fields"]["value"];
+  messageIndex = (messageIndex + 1) % MAX_MESSAGES;
+
+  // Clear the display
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+
+  // Update and display the time
+  timeClient.update();
+  display.setCursor(0, 0);
+  display.print("Time: ");
+  display.println(timeClient.getFormattedTime());
+
+  // Display the last messages for each type
+  const char* types[] = {"TI", "VI", "PI", "HI"};
+  int y = 16;
+  for (int i = 0; i < 4; i++)
+  {
+    for (int j = 0; j < MAX_MESSAGES; j++)
+    {
+      int index = (messageIndex + MAX_MESSAGES - 1 - j) % MAX_MESSAGES;
+      if (strcmp(messages[index].type, types[i]) == 0)
+      {
+        display.setCursor(0, y);
+        display.print("Type: ");
+        display.print(types[i]);
+        display.print(" MV: ");
+        display.println(messages[index].value);
+        y += 8; // Move to the next line
+        break; // Move to the next type
+      }
+    }
   }
 
   // Update the display
